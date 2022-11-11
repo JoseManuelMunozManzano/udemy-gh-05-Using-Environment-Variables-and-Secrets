@@ -14,10 +14,14 @@ jobs:
     # Aquí un ejemplo a nivel de job. La variable estará definida en todo el job, pero no en otros jobs.
     # También existen variables de entorno por defecto proporcionadas por GitHub
     # https://docs.github.com/en/actions/learn-github-actions/environment-variables#default-environment-variables
+    # Para los valores de conexión se va a usar secrets.
+    # Para añadirlos hay que ir al Settings del Repository, Security y Secrets. Y se pueden establecer
+    # action secrets concretos que estarán disponibles para todos los workflows de este repositorio.
+    # Y se usan con GitHub Actions expressions, usando secrets
     env:
-      MONGODB_CLUSTER_ADDRESS: cluster.7sdaax.mongodb.net
-      MONGODB_USERNAME: xxx
-      MONGODB_PASSWORD: xxxxxxxx
+      MONGODB_CLUSTER_ADDRESS: ${{ secrets.MONGODB_CLUSTER_ADDRESS }}
+      MONGODB_USERNAME: ${{ secrets.MONGODB_USERNAME }}
+      MONGODB_PASSWORD: ${{ secrets.MONGODB_PASSWORD }}
       PORT: 8080
     environment: testing
     runs-on: ubuntu-latest
@@ -40,7 +44,7 @@ jobs:
       - name: Run tests
         run: npm test
       - name: Output information
-        # Se puede indicar $MONGODB_USERNAME o de esta otra forma
+        # Se puede indicar $MONGODB_USERNAME o de esta otra forma, con GitHub Actions expressions
         run: |
           echo "MONGODB_USERNAME: ${{ env.MONGODB_USERNAME }}"
   deploy:
@@ -49,7 +53,8 @@ jobs:
     steps:
       - name: Output information
         # En este job no está definida la variable de entorno MONGODB_USERNAME
-        # Si está definida a nivel de workflow la variable de entorno MONGODB_DB_NAME
+        # Si está definida a nivel de workflow la variable de entorno MONGODB_DB_NAME pero no se verá
+        #   su valor porque es un secret
         run: |
           echo "MONGODB_USERNAME: ${{ env.MONGODB_USERNAME }}"
           echo "MONGODB_DB_NAME: $MONGODB_DB_NAME"
