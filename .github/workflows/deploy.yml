@@ -17,7 +17,7 @@ jobs:
     # Para los valores de conexión se va a usar secrets.
     # Para añadirlos hay que ir al Settings del Repository, Security y Secrets. Y se pueden establecer
     # action secrets concretos que estarán disponibles para todos los workflows de este repositorio.
-    # Y se usan con GitHub Actions expressions, usando secrets
+    # Y se usan con GitHub Actions expressions, usando secrets.
     env:
       MONGODB_CLUSTER_ADDRESS: ${{ secrets.MONGODB_CLUSTER_ADDRESS }}
       MONGODB_USERNAME: ${{ secrets.MONGODB_USERNAME }}
