@@ -18,12 +18,17 @@ jobs:
     # Para añadirlos hay que ir al Settings del Repository, Security y Secrets. Y se pueden establecer
     # action secrets concretos que estarán disponibles para todos los workflows de este repositorio.
     # Y se usan con GitHub Actions expressions, usando secrets.
+    #
+    # Otra forma de añadir secrets es creando primero en Settings y Environments los distintos entornos,
+    # test y producción por ejemplo y luego crear los secrets, porque pueden tener distintos valores
+    # en distintos entornos.
+    # Ahora en un job concreto se añade la key environment para especificar un entorno específico.
+    environment: testing
     env:
       MONGODB_CLUSTER_ADDRESS: ${{ secrets.MONGODB_CLUSTER_ADDRESS }}
       MONGODB_USERNAME: ${{ secrets.MONGODB_USERNAME }}
       MONGODB_PASSWORD: ${{ secrets.MONGODB_PASSWORD }}
       PORT: 8080
-    environment: testing
     runs-on: ubuntu-latest
     steps:
       - name: Get Code
