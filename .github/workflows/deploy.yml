@@ -1,0 +1,52 @@
+name: Deployment
+on:
+  push:
+    branches:
+      - main
+      - dev
+# Se pueden definir variables de entorno en distintos sitios de un workflow. Por ejemplo, aquí a nivel
+# general, esta variable estará disponible en todos los jobs salvo que algún job sobreescriba la variable.
+env:
+  MONGODB_DB_NAME: gha-demo
+jobs:
+  test:
+    # También se pueden definir variables de entorno a nivel de job e incluso a nivel de step.
+    # Aquí un ejemplo a nivel de job. La variable estará definida en todo el job, pero no en otros jobs.
+    env:
+      MONGODB_CLUSTER_ADDRESS: cluster.7sdaax.mongodb.net
+      MONGODB_USERNAME: xxx
+      MONGODB_PASSWORD: xxxxxxxx
+      PORT: 8080
+    environment: testing
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get Code
+        uses: actions/checkout@v3
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: npm-deps-${{ hashFiles('**/package-lock.json') }}
+      - name: Install dependencies
+        run: npm ci
+        # Usando una variable de entorno en una instrucción run
+        # Se pueden usar poniendo el signo $ por delante (si corre en Linux)
+        # Si corre en Wi ndows se usa $env:NAME
+        # https://docs.github.com/es/actions/using-workflows/workflow-syntax-for-github-actions
+      - name: Run server
+        run: npm start & npx wait-on http://127.0.0.1:$PORT
+      - name: Run tests
+        run: npm test
+      - name: Output information
+        # Se puede indicar $MONGODB_USERNAME o de esta otra forma
+        run: echo "MONGODB_USERNAME: ${{ env.MONGODB_USERNAME }}"
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Output information
+        # En este job no está definida la variable de entorno MONGODB_USERNAME
+        # Si está definida a nivel de workflow la variable de entorno MONGODB_DB_NAME
+        run: |
+          echo "MONGODB_USERNAME: ${{ env.MONGODB_USERNAME }}"
+          echo "MONGODB_DB_NAME: $MONGODB_DB_NAME"
