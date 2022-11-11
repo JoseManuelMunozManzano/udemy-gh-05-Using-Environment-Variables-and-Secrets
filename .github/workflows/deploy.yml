@@ -12,6 +12,8 @@ jobs:
   test:
     # También se pueden definir variables de entorno a nivel de job e incluso a nivel de step.
     # Aquí un ejemplo a nivel de job. La variable estará definida en todo el job, pero no en otros jobs.
+    # También existen variables de entorno por defecto proporcionadas por GitHub
+    # https://docs.github.com/en/actions/learn-github-actions/environment-variables#default-environment-variables
     env:
       MONGODB_CLUSTER_ADDRESS: cluster.7sdaax.mongodb.net
       MONGODB_USERNAME: xxx
@@ -31,7 +33,7 @@ jobs:
         run: npm ci
         # Usando una variable de entorno en una instrucción run
         # Se pueden usar poniendo el signo $ por delante (si corre en Linux)
-        # Si corre en Wi ndows se usa $env:NAME
+        # Si corre en Windows se usa $env:NAME
         # https://docs.github.com/es/actions/using-workflows/workflow-syntax-for-github-actions
       - name: Run server
         run: npm start & npx wait-on http://127.0.0.1:$PORT
